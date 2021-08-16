@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:survey_app/screens/survey_screen.dart';
+
+import 'survey_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -34,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       displayOtp = true;
     });
-    FocusScope.of(context).requestFocus(otpFocus);
   }
 
   _phoneValidator(String? value) {
@@ -89,10 +89,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     TextFormField(
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(labelText: 'Phone number'),
-                        validator: (value) => _phoneValidator(value)),
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(labelText: 'Phone number'),
+                      validator: (value) => _phoneValidator(value),
+                      readOnly: displayOtp,
+                    ),
                     SizedBox(
                       height: 50,
                     ),
@@ -106,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   decoration: InputDecoration(
                                       labelText: 'Demo 4 digit otp'),
                                   validator: (value) => _otpValidator(value),
+                                  autofocus: true,
                                   focusNode: otpFocus,
                                 ),
                                 SizedBox(
