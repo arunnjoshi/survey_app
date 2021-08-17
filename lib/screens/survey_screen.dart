@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:survey_app/models/qa_model.dart';
+import 'package:survey_app/services/survey_service.dart';
 import 'package:survey_app/widgets/question.dart';
 
 class SurveyScreen extends StatefulWidget {
@@ -13,7 +14,8 @@ class SurveyScreen extends StatefulWidget {
 class _SurveyScreenState extends State<SurveyScreen> {
   List<QA> values = [];
   var _formKey = GlobalKey<FormState>();
-
+  var service = new QuestionService();
+  List<QA> questions = [];
   @override
   void initState() {
     values = [];
@@ -27,10 +29,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
     for (var v in values) {
       print('${v.id} ${v.question} ${v.answer} ${v.index}');
     }
+    FocusScope.of(context).unfocus();
   }
 
   setFromValues(QA qa) {
-    var b = values;
     if (values.any((element) => element.id == qa.id)) {
       var id = values.indexWhere((element) => element.id == qa.id);
       values[id] = qa;
@@ -44,6 +46,11 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    service
+        .getAllQuestions()
+        .then((value) => questions = value)
+        .catchError((e) => values = []);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Survey"),
@@ -55,20 +62,19 @@ class _SurveyScreenState extends State<SurveyScreen> {
             // crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Question(
-                QA(
-                    answer: "",
-                    id: 1,
-                    index: 1,
-                    question:
-                        "this is a long question for us this is a long question for us this is a long question for us this is a long question for us this is a long question for us this is a long question for us",),
-                setFromValues,
-                key: ValueKey(1),
+              ...questions.map((q) => Question(q, setFromValues)).toList(),
+              SizedBox(
+                height: 20,
               ),
-              Question(QA(answer: "", id: 2, index: 2, question: "Yo2"),
-                  setFromValues,
-                  key: ValueKey(2)),
-              ElevatedButton(onPressed: _submitForm, child: Text('Submit'))
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                      onPressed: _submitForm, child: Text('Submit')),
+                ),
+              )
             ],
           ),
         ),

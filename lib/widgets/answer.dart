@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:survey_app/models/qa_model.dart';
 
 class Answer extends StatelessWidget {
   final Function onfieldChange;
